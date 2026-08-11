@@ -1,9 +1,7 @@
-name: Android CI
+name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -11,23 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. ALWAYS checkout the repository FIRST
-    - name: Checkout code
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    # 2. Set up Java and caching AFTER checkout
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    # 3. Grant execution permissions
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    # 4. Run the Gradle build
-    - name: Build with Gradle
+    - name: Build Debug APK
       run: ./gradlew assembleDebug
-      
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        
